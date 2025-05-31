@@ -294,10 +294,16 @@
 
       const requiredFields = [
         [svrha, svrha.value.trim()],
-        [primalac, primalac.value.trim()],
-        [sifra, sifra.value.trim()],
-        [iznos, iznos.value.trim()]
+        [primalac, primalac.value.trim()]
       ];
+
+      const sifraValue = parseInt(sifra.value, 10);
+      const isSifraValid = sifraValue >= 200 && sifraValue <= 299;
+      sifra.classList.toggle('is-invalid', !isSifraValid);
+
+      const iznosValue = parseFloat(iznos.value.replace(',', '.'));
+      const isIznosValid = iznosValue > 0;
+      iznos.classList.toggle('is-invalid', !isIznosValid);
 
       for (const [field, value] of requiredFields) {
         field.classList.toggle('is-invalid', value === '');
