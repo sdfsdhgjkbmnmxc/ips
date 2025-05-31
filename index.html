@@ -52,7 +52,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="racun" class="form-label">Račun primaoca</label>
-                    <input type="text" id="racun" class="form-control" pattern="\d{18}" maxlength="18">
+                    <input type="text" id="racun" class="form-control" pattern="\d{18}" maxlength="30">
                 </div>
                 <div class="mb-3">
                     <div class="row">
@@ -68,8 +68,8 @@
                 </div>
             </div>
             <div class="col text-center">
-                <canvas id="qr" class="w-100"></canvas>
-                <textarea id="ipsText" class="form-control" rows="5" readonly></textarea>
+                <canvas id="qr" class="w-100 d-none"></canvas>
+                <textarea id="ipsText" class="form-control" rows="5"></textarea>
             </div>
         </div>
     </div>
@@ -140,8 +140,91 @@
 
     const parsed = parseIPS(initialText);
     populateFields(parsed);
+    onAnyInputChange();
 
     updateQR(initialText);
+
+    function collectData() {
+      const data = {
+        K: 'PR',
+        V: '01',
+        C: '1'
+      };
+      const platilac = document.getElementById('platilac').value.trim();
+      if (platilac) data.P = platilac;
+
+      const svrha = document.getElementById('svrha').value.replace(/\s+/g, ' ').trim();
+      if (svrha) data.S = svrha;
+
+      const primalac = document.getElementById('primalac').value.trim();
+      if (primalac) data.N = primalac;
+
+      const sifra = document.getElementById('sifra').value.trim();
+      if (sifra) data.SF = sifra;
+
+      const valuta = document.getElementById('valuta').value.trim();
+      const iznosRaw = document.getElementById('iznos').value.trim();
+      const iznosNum = parseFloat(iznosRaw.replace(',', '.'));
+      if (!isNaN(iznosNum) && valuta) {
+        const formatted = iznosNum.toFixed(2).replace('.', ',');
+        data.I = valuta + formatted;
+      }
+
+      const racunRaw = document.getElementById('racun').value;
+      const racun = racunRaw.replace(/[\s-]/g, '');
+
+      data.R = racun;
+
+      const model = document.getElementById('model').value.trim();
+      const poziv = document.getElementById('poziv').value.trim();
+      if (model && poziv) data.RO = model + poziv;
+
+      return data;
+    }
+
+    function buildIPS(data) {
+      return ['K', 'V', 'C', 'R', 'N', 'I', 'SF', 'S', 'P', 'RO']
+        .filter(key => data[key])
+        .map(key => `${key}:${data[key]}`)
+        .join('|');
+    }
+
+    function isValidModel97(account, model) {
+      const digitsOnly = account.replace(/\D/g, '');
+      if (digitsOnly.length !== 18) return false;
+      if (model !== '97') return true;
+      const rearranged = digitsOnly.slice(5) + digitsOnly.slice(0, 5) + '00';
+      try {
+        return BigInt(rearranged) % 97n === 1n;
+      } catch {
+        return false;
+      }
+    }
+
+    function onAnyInputChange() {
+      const racunRaw = document.getElementById('racun').value;
+      const racun = racunRaw.replace(/[\s-]/g, '');
+      const racunInput = document.getElementById('racun');
+      const model = document.getElementById('model').value.trim();
+      if (!isValidModel97(racun, model)) {
+        racunInput.classList.add('is-invalid');
+        qr.element.classList.add('d-none');
+      } else {
+        racunInput.classList.remove('is-invalid');
+        qr.element.classList.remove('d-none');
+      }
+      const data = collectData();
+      const text = buildIPS(data);
+      textarea.value = text;
+      updateQR(text);
+      updateURL(encodeURIComponent(text));
+    }
+
+    const inputIds = ['platilac', 'svrha', 'primalac', 'sifra', 'valuta', 'iznos', 'racun', 'model', 'poziv'];
+    inputIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', onAnyInputChange);
+    });
 
     textarea.addEventListener('input', () => {
       const value = textarea.value;
