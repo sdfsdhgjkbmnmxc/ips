@@ -1,4 +1,6 @@
 # IPS Generator
+[![GitHub Pages](https://github.com/sdfsdhgjkbmnmxc/ips/actions/workflows/static.yml/badge.svg)](https://github.com/sdfsdhgjkbmnmxc/ips/actions/workflows/static.yml)
+
 Ovaj alat pravi IPS kodove za plaćanje u Srbiji. 
 
 Sve što upišete ide u link. Ne koristi bazu podataka niti zahteva bekend. Taj link možete:
