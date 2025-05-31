@@ -9,6 +9,9 @@
         .form-label {
             font-weight: bold;
         }
+        [readonly] {
+            background-color: #f8f9fa;
+        }
     </style>
 </head>
 <body class="p-4">
@@ -103,6 +106,41 @@
       'K:PR|V:01|C:1|R:160000000123456789|N:MOJA FIRMA DOO|I:RSD1234.56|S:Račun za usluge';
 
     textarea.value = initialText;
+    function parseIPS(text) {
+      const parts = text.split('|');
+      const data = {};
+      parts.forEach(p => {
+        const [key, ...rest] = p.split(':');
+        data[key] = rest.join(':');
+      });
+      return data;
+    }
+
+    function populateFields(data) {
+      if (data.P) document.getElementById('platilac').value = data.P;
+      if (data.S) document.getElementById('svrha').value = data.S;
+      if (data.N) document.getElementById('primalac').value = data.N;
+      if (data.SF) document.getElementById('sifra').value = data.SF;
+      if (data.I) {
+        const match = data.I.match(/^([A-Z]{3})([\d.,]+)$/);
+        if (match) {
+          document.getElementById('valuta').value = match[1];
+          document.getElementById('iznos').value = match[2].replace(',', '.');
+        }
+      }
+      if (data.R) document.getElementById('racun').value = data.R;
+      if (data.RO) {
+        const match = data.RO.match(/^(\d{2})(.+)$/);
+        if (match) {
+          document.getElementById('model').value = match[1];
+          document.getElementById('poziv').value = match[2];
+        }
+      }
+    }
+
+    const parsed = parseIPS(initialText);
+    populateFields(parsed);
+
     updateQR(initialText);
 
     textarea.addEventListener('input', () => {
