@@ -51,6 +51,18 @@
                     <label for="racun" class="form-label">Račun primaoca</label>
                     <input type="text" id="racun" class="form-control" pattern="\d{18}" maxlength="18">
                 </div>
+                <div class="mb-3">
+                    <div class="row">
+                        <div class="col-4">
+                            <label for="model" class="form-label">Broj modela</label>
+                            <input type="text" id="model" class="form-control" maxlength="2" pattern="\d{2}">
+                        </div>
+                        <div class="col-8">
+                            <label for="poziv" class="form-label">Poziv na broj (odobrenje)</label>
+                            <input type="text" id="poziv" class="form-control" maxlength="20">
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="col text-center">
                 <canvas id="qr" class="w-100"></canvas>
