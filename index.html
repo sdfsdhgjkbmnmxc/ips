@@ -163,7 +163,7 @@
     // Load from URL or use fallback test data
     const urlParam = new URLSearchParams(window.location.search).get('ips');
     const initialText = urlParam ? decodeParam(urlParam) :
-      'K:PR|V:01|C:1|R:160000000123456789|N:MOJA FIRMA DOO|I:RSD1234.56|S:Račun za usluge';
+      'K:PR|V:01|C:1|R:160000000123456789|N:MOJA FIRMA DOO|I:RSD1,23|S:Račun za usluge|SF:221|RO:001267-25';
 
     textarea.value = initialText;
     function parseIPS(text) {
