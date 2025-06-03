@@ -279,16 +279,14 @@
 
       const roModel = model;
       const roValue = poziv.value.trim();
-      const roCombined = roModel + roValue;
       const roField = poziv;
 
       const roValid = (() => {
-        if (!/^\d{2}/.test(roCombined)) return false;
+        if (!roValue) return true;
         if (roModel === '97') {
           return /^[0-9]+$/.test(roValue);
-        } else {
-          return /^[0-9A-Z\-]+$/.test(roValue);
         }
+        return /^[0-9A-Z\-]+$/.test(roValue);
       })();
 
       roField.classList.toggle('is-invalid', !roValid);
