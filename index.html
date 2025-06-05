@@ -23,6 +23,10 @@
         input[type="number"] {
             -moz-appearance: textfield;
         }
+        .required-star {
+            color: red;
+            font-weight: normal;
+        }
     </style>
 </head>
 <body class="p-4">
@@ -40,7 +44,7 @@
                     <input type="text" id="svrha" class="form-control" maxlength="100">
                 </div>
                 <div class="mb-3">
-                    <label for="primalac" class="form-label">Primalac</label>
+                    <label for="primalac" class="form-label">Primalac <span class="required-star">*</span></label>
                     <input type="text" id="primalac" class="form-control" maxlength="70">
                 </div>
             </div>
@@ -48,21 +52,21 @@
                 <div class="mb-3">
                     <div class="row">
                         <div class="col-3">
-                            <label for="sifra" class="form-label text-nowrap">Šifra plaćanja</label>
+                            <label for="sifra" class="form-label text-nowrap">Šifra plaćanja <span class="required-star">*</span></label>
                             <input type="number" id="sifra" class="form-control" min="200" max="299">
                         </div>
                         <div class="col-3">
-                            <label for="valuta" class="form-label">Valuta</label>
+                            <label for="valuta" class="form-label">Valuta <span class="required-star">*</span></label>
                             <input type="text" id="valuta" class="form-control" value="RSD" readonly>
                         </div>
                         <div class="col-6">
-                            <label for="iznos" class="form-label">Iznos</label>
+                            <label for="iznos" class="form-label">Iznos <span class="required-star">*</span></label>
                             <input type="number" id="iznos" class="form-control" step="0.01" min="0">
                         </div>
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label for="racun" class="form-label">Račun primaoca</label>
+                    <label for="racun" class="form-label">Račun primaoca <span class="required-star">*</span></label>
                     <input type="text" id="racun" class="form-control" pattern="\d{18}" maxlength="30">
                 </div>
                 <div class="mb-3">
@@ -70,7 +74,7 @@
                         <div class="col-4">
                             <label for="model" class="form-label">Broj modela</label>
                             <select id="model" class="form-select">
-                                <option value="00" selected>00</option>
+                                <option value="00" selected>-</option>
                                 <option value="97">97</option>
                                 <option value="11">11</option>
                                 <option value="12">12</option>
@@ -161,10 +165,9 @@
       }
     }
 
-    // Load from URL or use fallback test data
     const urlParam = new URLSearchParams(window.location.search).get('ips');
     const initialText = urlParam ? decodeParam(urlParam) :
-      'K:PR|V:01|C:1|R:160000000123456789|N:MOJA FIRMA DOO|I:RSD1,23|S:Račun za usluge|SF:221|RO:001267-25';
+      'K:PR|V:01|C:1|R:160000000123456789|N:MOJA FIRMA DOO|I:RSD1,23|S:Račun za usluge|SF:221';
 
     textarea.value = initialText;
     function parseIPS(text) {
@@ -282,14 +285,13 @@
       const roCombined = roModel + roValue;
       const roField = poziv;
 
-      const roValid = (() => {
-        if (!/^\d{2}/.test(roCombined)) return false;
-        if (roModel === '97') {
-          return /^[0-9]+$/.test(roValue);
-        } else {
-          return /^[0-9A-Z\-]+$/.test(roValue);
-        }
-      })();
+      let roValid = true;
+      if (roModel !== '00') {
+        roValid = /^\d{2}/.test(roCombined)
+          && (roModel === '97'
+              ? /^[0-9]+$/.test(roValue)
+              : /^[0-9A-Z\-]+$/.test(roValue));
+      }
 
       roField.classList.toggle('is-invalid', !roValid);
 
