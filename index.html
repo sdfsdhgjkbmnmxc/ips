@@ -258,13 +258,15 @@
     function isValidModel97(account, model) {
       const digitsOnly = account.replace(/\D/g, '');
       if (digitsOnly.length !== 18) return false;
-      if (model !== '97') return true;
-      const rearranged = digitsOnly.slice(5) + digitsOnly.slice(0, 5) + '00';
-      try {
-        return BigInt(rearranged) % 97n === 1n;
-      } catch {
-        return false;
-      }
+      // if (model !== '97') return true;
+      // try {
+      //   const number = BigInt(digitsOnly + '00');
+      //   return number % 97n === 1n;
+      // } catch {
+      //   console.error('Greška prilikom validacije računa:', digitsOnly);
+      //   return false;
+      // }
+        return true
     }
 
     function onAnyInputChange() {
